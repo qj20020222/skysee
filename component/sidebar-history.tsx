@@ -72,7 +72,7 @@ const PureChatItem = ({
     return true;
     });
 
-  export function SidebarHistory({ user }: { user: User | undefined }) {
+  export function SidebarHistory({ userId }: { userId: string | null }) {
     const { id } = useParams();
     const pathname = usePathname();
     const [deleteId, setDeleteId] = useState<string | null>(null);
@@ -89,7 +89,7 @@ const PureChatItem = ({
       data: history,
       isLoading,
       mutate,
-    } = useSWR<Array<Chat>>(user ? '/api/history' : null, fetches, {
+    } = useSWR<Array<Chat>>(userId ? '/api/history' : null, fetches, {
       fallbackData: [],
     });
 
@@ -102,7 +102,7 @@ const PureChatItem = ({
 
     }
 
-    if (!user) {
+    if (!userId) {
       return (
         <SidebarGroup>
           <SidebarGroupContent>

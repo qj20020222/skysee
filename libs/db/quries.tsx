@@ -6,7 +6,7 @@ import {chat} from "./schema"
 import { and, asc, desc, eq, gt, gte } from 'drizzle-orm';
 
 const client = postgres(process.env.POSTGRES_URL!);
-const db = drizzle(client);
+export const db = drizzle(client);
 
 
 export async function getChatsByUserId({ id }: { id: string }) {
