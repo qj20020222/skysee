@@ -8,7 +8,7 @@ import { Message } from "ai";
 import { MultimodalInput } from './multimodal-input';
 
 
-type Props = { chatId: number };
+type Props = { chatId: string };
 
 const ChatComponent = ({ chatId }: Props) => {
   const { data, isLoading } = useQuery({

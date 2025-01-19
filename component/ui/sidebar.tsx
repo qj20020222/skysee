@@ -196,6 +196,49 @@ const SidebarMenuAction = React.forwardRef<
     );
   });
 
+const SidebarGroup = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'>
+>(({ className, ...props }, ref) => {
+  return (
+    <div
+      ref={ref}
+      data-sidebar="group"
+      className={cn('relative flex w-full min-w-0 flex-col p-2', className)}
+      {...props}
+    />
+  );
+});
+SidebarGroup.displayName = 'SidebarGroup';
+
+const SidebarGroupContent = React.forwardRef<
+  HTMLDivElement,
+  React.ComponentProps<'div'>
+>(({ className, ...props }, ref) => (
+  <div
+    ref={ref}
+    data-sidebar="group-content"
+    className={cn('w-full text-sm', className)}
+    {...props}
+  />
+));
+SidebarGroupContent.displayName = 'SidebarGroupContent';
+
+
+const SidebarMenu = React.forwardRef<
+  HTMLUListElement,
+  React.ComponentProps<'ul'>
+>(({ className, ...props }, ref) => (
+  <ul
+    ref={ref}
+    data-sidebar="menu"
+    className={cn('flex w-full min-w-0 flex-col gap-1', className)}
+    {...props}
+  />
+));
+SidebarMenu.displayName = 'SidebarMenu';
+
+
   export {
     Sidebar,
     SidebarContent,
@@ -203,5 +246,8 @@ const SidebarMenuAction = React.forwardRef<
     SidebarMenuButton,
     SidebarMenuAction,
     SidebarMenuItem,
+    SidebarGroup,
+    SidebarGroupContent,
+    SidebarMenu
   };
 

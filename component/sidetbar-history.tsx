@@ -1,4 +1,4 @@
-import type {chat} from '@/libs/db/schema'
+import type {Chat} from '@/libs/db/schema'
 import useSWR from 'swr';
 import { memo, useEffect, useState } from 'react';
 import { useParams, usePathname, useRouter } from 'next/navigation';
@@ -9,34 +9,36 @@ import {
   SidebarMenuAction,
   SidebarMenuButton,
   SidebarMenuItem,
-  useSidebar,
-} from '@/components/ui/sidebar';
+} from './ui/sidebar';
 import type { User } from 'next-auth';
 import {
   DropdownMenu,
   DropdownMenuTrigger,
+  DropdownMenuContent,
+  DropdownMenuItem
 } from "./ui/downdrop"
+
 import { fetches } from '@/libs/utils';
 import Link from "next/link";
-import type { Chat } from '@/lib/db/schema';
-
+import {
+  MoreHorizontalIcon,
+  TrashIcon
+} from './icons';
 
 const PureChatItem = ({
     chat,
     isActive,
     onDelete,
-    setOpenMobile,
   }: {
     chat: Chat;
     isActive: boolean;
     onDelete: (chatId: string) => void;
-    setOpenMobile: (open: boolean) => void;
   }) => {
     return (
       <SidebarMenuItem>
         <SidebarMenuButton asChild isActive={isActive}>
-          <Link href={`/chat/${chat.id}`} onClick={() => setOpenMobile(false)}>
-            <span>{chat.title}</span>
+          <Link href={`/chat/${chat.id}`} >
+            <span>{chat.pdfName}</span>
           </Link>
         </SidebarMenuButton>
   
@@ -76,13 +78,18 @@ const PureChatItem = ({
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
     const {
-      data:history,
-      mutate, isLoading} = useSWR<Array<Chat>>(user? 'api/history' : null, fetches, {fallbackdata:[]});
-    
+      data: history,
+      isLoading,
+      mutate,
+    } = useSWR<Array<Chat>>(user ? '/api/history' : null, fetches, {
+      fallbackData: [],
+    });
+
     const router = useRouter();
     useEffect(() => {
       mutate();
     }, [pathname, mutate]);
+
     const deletchat = async() => {
 
     }
@@ -127,5 +134,31 @@ const PureChatItem = ({
         </SidebarGroup>
       );
     }
+
+    return (
+      <>
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <>
+              {history.map((chat) => (
+                  <ChatItem
+                    key={chat.id}
+                    chat={chat}
+                    isActive={chat.id === id}
+                    onDelete={(chatId) => {
+                        setDeleteId(chatId);
+                        setShowDeleteDialog(true);
+                    }}
+                   />
+              ))}
+
+
+
+            </>
+
+          </SidebarGroupContent>
+        </SidebarGroup>
+      </>
+    )
 
   }
