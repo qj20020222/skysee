@@ -6,7 +6,7 @@ import {
   TooltipContent,
   TooltipProvider,
   TooltipTrigger,
-} from '@/components/ui/tooltip';
+} from '@/component/ui/tooltip';
 
 import { VariantProps, cva } from 'class-variance-authority';
 import { Slot } from '@radix-ui/react-slot';

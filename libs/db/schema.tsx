@@ -6,11 +6,12 @@ import {
     text,
     timestamp,
     varchar,
+    uuid
   } from "drizzle-orm/pg-core";
   import type { InferSelectModel } from 'drizzle-orm';
   
 export const chat = pgTable("chats", {
-    id: serial("id").primaryKey(),
+    id:uuid('id').primaryKey().notNull().defaultRandom(),
     pdfName: text("pdf_name").notNull(),
     pdfUrl: text("pdf_url").notNull(),
     createdAt: timestamp("created_at").notNull().defaultNow(),

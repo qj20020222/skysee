@@ -6,11 +6,13 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import { Message } from "ai";
 import { MultimodalInput } from './multimodal-input';
-
+import useSWR, { useSWRConfig } from 'swr';
 
 type Props = { chatId: string };
 
 const ChatComponent = ({ chatId }: Props) => {
+  const { mutate } = useSWRConfig();
+
   const { data, isLoading } = useQuery({
     queryKey: ["chat", chatId],
     queryFn: async () => {
@@ -21,13 +23,24 @@ const ChatComponent = ({ chatId }: Props) => {
     },
   });
 
-  const { input, handleInputChange, handleSubmit, messages } = useChat({
-    api: "/api/chat",
-    body: {
-      chatId,
+  const {
+    messages,
+    setMessages,
+    handleSubmit,
+    input,
+    setInput,
+    append,
+    stop,
+    reload,
+  } = useChat({
+    body: { chatId},
+    initialMessages: data||[],
+    experimental_throttle: 100,
+    onFinish: () => {
+      mutate('/api/history');
     },
-    initialMessages: data || [],
   });
+
   React.useEffect(() => {
     const messageContainer = document.getElementById("message-container");
     if (messageContainer) {
@@ -58,7 +71,7 @@ const ChatComponent = ({ chatId }: Props) => {
               stop={stop}
               messages={messages}
               setMessages={setMessages}
-              append={append}
+              isLoading = {isLoading}
             />
         </form>
     </div> 

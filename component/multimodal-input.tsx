@@ -35,7 +35,7 @@ function PureMultimodalInput({
   handleSubmit,
   className,
 }: {
-  chatId: number;
+  chatId: string;
   input: string;
   setInput: (value: string) => void;
   isLoading: boolean;

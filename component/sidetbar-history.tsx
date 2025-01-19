@@ -77,6 +77,14 @@ const PureChatItem = ({
     const pathname = usePathname();
     const [deleteId, setDeleteId] = useState<string | null>(null);
     const [showDeleteDialog, setShowDeleteDialog] = useState(false);
+    type history= {
+      id: string;
+      pdfName: string;
+      pdfUrl: string;
+      createdAt: Date;
+      userId: string;
+      fileKey: string;
+  }[] | undefined
     const {
       data: history,
       isLoading,
@@ -135,12 +143,24 @@ const PureChatItem = ({
       );
     }
 
+    if (history?.length === 0) {
+      return (
+        <SidebarGroup>
+          <SidebarGroupContent>
+            <div className="px-2 text-zinc-500 w-full flex flex-row justify-center items-center text-sm gap-2">
+              Your conversations will appear here once you start chatting!
+            </div>
+          </SidebarGroupContent>
+        </SidebarGroup>
+      );
+    }
+
     return (
       <>
         <SidebarGroup>
           <SidebarGroupContent>
             <>
-              {history.map((chat) => (
+              {history?.map((chat) => (
                   <ChatItem
                     key={chat.id}
                     chat={chat}
@@ -151,9 +171,6 @@ const PureChatItem = ({
                     }}
                    />
               ))}
-
-
-
             </>
 
           </SidebarGroupContent>
