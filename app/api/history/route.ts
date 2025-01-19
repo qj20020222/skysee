@@ -1,5 +1,5 @@
 import { auth } from "@clerk/nextjs/server";
-import { getChatsByUserId } from '@/libs/db/queries';
+import { getChatsByUserId } from '@/libs/db/quries';
 
 export async function GET() {
   const session = await auth();
