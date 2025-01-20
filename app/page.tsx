@@ -1,58 +1,64 @@
-import ChatComponent from "@/component/Chatcomponent";
-import ChatSideBar from "@/component/ChatSideBar";
-import PDFViewer from "@/component/PDFViewer";
-import { chat } from "@/libs/db/schema";
-//import { checkSubscription } from "@/lib/subscription";
+import { Button } from "@/component/ui/button";
 import { auth } from "@clerk/nextjs/server";
-import { redirect } from "next/navigation";
-import React from "react";
-import {getChatsByUserId} from '@/libs/db/quries';
+import { UserButton } from "@clerk/nextjs";
+import Link from "next/link";
+import { ArrowRight, LogIn } from "lucide-react";
+import FileUpload from "@/component/Fileupload";
+import { db } from "@/libs/db/quries";
+import { chat } from "@/libs/db/schema";
+import { eq } from "drizzle-orm";
+import { getChatsByUserId } from "@/libs/db/quries";
 
-type Props = {
-  params: {
-    chatId: string;
-  };
-};
-
-const ChatPage = async ({ params: { chatId } }: Props) => {
-
+export default async function Home() {
   const { userId } = await auth();
- 
-  if (!userId) {
-    return redirect("/sign-in");
-  } 
-
-  const _chats = await getChatsByUserId({id:userId});
-
-  if (!_chats) {
-    return redirect("/");
+  const isAuth = !!userId;
+  let firstChat;
+  if (userId) {
+    firstChat = await getChatsByUserId({id:userId});
+    if (firstChat) {
+      firstChat = firstChat[0];
+    }
   }
-  if (!_chats.find((chat) => chat.id === chatId)) {
-    return redirect("/");
-  }
-
-  const currentChat = _chats.find((chat) => chat.id === chatId);
-  //const isPro = await checkSubscription();
-
   return (
-    <div className="flex max-h-screen overflow-scroll">
-     <div className="flex w-full max-h-screen overflow-scroll">
-        {/* chat sidebar */}
-       <div className="flex-[1] max-w-xs">
-        <ChatSideBar userId = {userId}/>
-       </div>
-     {/* pdf viewer */}
-      <div className="max-h-screen p-4 oveflow-scroll flex-[5]">
-       <PDFViewer pdf_url={""} 
-       />
-     </div>
-        {/* chat component */}
-        <div className="flex-[3] border-l-4 border-l-slate-200">
-          <ChatComponent chatId={chatId} />
+    <div className="w-screen min-h-screen bg-gradient-to-r from-rose-100 to-teal-100">
+      <div className="absolute top-1/2 left-1/2 -translate-x-1/2 -translate-y-1/2">
+        <div className="flex flex-col items-center text-center">
+          <div className="flex items-center">
+            <h1 className="mr-3 text-5xl font-semibold">Chat with any PDF</h1>
+            <UserButton afterSignOutUrl="/" />
+          </div>
+
+          <div className="flex mt-2">
+            {isAuth && firstChat && (
+              <>
+                <Link href={`/chat/${firstChat.id}`}>
+                  <Button>
+                    Go to Chats <ArrowRight className="ml-2" />
+                  </Button>
+                </Link>
+              </>
+            )}
+          </div>
+
+          <p className="max-w-xl mt-1 text-lg text-slate-600">
+            Join millions of students, researchers and professionals to instantly
+            answer questions and understand research with AI
+          </p>
+
+          <div className="w-full mt-4">
+            {isAuth ? (
+              <FileUpload />
+            ) : (
+              <Link href="/sign-in">
+                <Button>
+                  Login to get Started!
+                  <LogIn className="w-4 h-4 ml-2" />
+                </Button>
+              </Link>
+            )}
+          </div>
         </div>
       </div>
     </div>
   );
-};
-
-export default ChatPage;
+}
